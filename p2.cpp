@@ -5,11 +5,39 @@
 
 using namespace std;
 
+class Graph
+{
+private:
+	vector<vector<int>> adjlist;
 
+public:
+	void VGraph(const string& filepath);
+
+};
+
+
+
+void Graph::VGraph(const string& filepath)
+{
+	ifstream fileG("graph.txt");
+
+	if (!fileG.is_open())
+	{
+		cerr << "file error";
+		
+	}
+	else
+	{
+		cout << fileG.rdbuf();
+	}
+}
 
 int main()
 {
 
+	Graph vg;
+	vg.VGraph("graph.txt");
 
-	return 0
+
+	return 0;
 }
