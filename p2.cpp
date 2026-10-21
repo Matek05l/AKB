@@ -9,6 +9,7 @@ class Graph
 {
 private:
 	vector<vector<int>> adjlist;
+	bool idc;
 
 public:
 	void VGraph(const string& filepath);
@@ -17,6 +18,7 @@ public:
 
 
 
+/*
 void Graph::VGraph(const string& filepath)
 {
 	ifstream fileG("graph.txt");
@@ -24,20 +26,22 @@ void Graph::VGraph(const string& filepath)
 	if (!fileG.is_open())
 	{
 		cerr << "file error";
-		
+
 	}
 	else
 	{
 		cout << fileG.rdbuf();
 	}
 }
+*/
+
 
 int main()
 {
 
-	Graph vg;
-	vg.VGraph("graph.txt");
-
+	//Graph vg;
+	//vg.VGraph("graph.txt");
+	// adjacency list
 
 	return 0;
 }
