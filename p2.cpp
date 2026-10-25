@@ -16,7 +16,8 @@ private:
 	map<string, pair<int, int>> graphH;
 
 public:
-	void VGraph(const string& filepath);
+	bool VGraph(const string& filepath);
+	void SGraph();
 	bool isonegraph();
 	bool isgspr();
 	bool isglinear();
@@ -27,15 +28,13 @@ public:
 
 
 
-void Graph::VGraph(const string& filepath)
+bool Graph::VGraph(const string& filepath)
 {
 	ifstream fileG(filepath);
 
 	if (!fileG.is_open())
-	{
-		cerr << "file error";
-		
-		return;
+	{	
+		return false;
 
 	}
 
@@ -78,7 +77,11 @@ void Graph::VGraph(const string& filepath)
 						
 		}
 
+	fileG.close();
+}
 
+void Graph::SGraph()
+{
 	for (auto& p : adjlist)
 	{
 		cout << p.first << " -> ";
@@ -90,7 +93,6 @@ void Graph::VGraph(const string& filepath)
 
 		cout << endl;
 	}
-	fileG.close();
 }
 
 bool Graph::isonegraph() 
@@ -324,28 +326,37 @@ void Graph::saveH(const string& filepath)
 
 int main()
 {
-	cout << "podaj nazwe pliku";
+	cout << "podaj nazwe pliku" << endl;
 	string filename;
 	cin >> filename;
 	Graph vg;
 	vg.VGraph(filename+".txt");
 
+	vg.SGraph();
+	if (!vg.VGraph(filename + ".txt"))
+	{
+		cout << "file error";
+		return 0;
+	}
 
 	if (vg.isgspr() == 1)
 	{
-		cout << "Graf jest  sprzezonym";
-		if (vg.convertH())
-		{
-			vg.saveH("graphH.txt");
-		}
-
+		cout << "Graf jest  sprzezony";
 		if (vg.isglinear() == 1)
 		{
-			cout << " i liniowy";
+			cout << " i liniowy" << endl;
 		}
 		else
 		{
-			cout << " i nie jest liniowy";
+			cout << " i nie jest liniowy" << endl;
+		}
+
+		if (vg.convertH())
+		{
+			string saveFileH;
+			cout << "podaj nazwe pliku dla grafu H" << endl;
+			cin >> saveFileH;
+			vg.saveH(saveFileH + ".txt");
 		}
 	}
 	else
