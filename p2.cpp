@@ -12,15 +12,19 @@ class Graph
 {
 private:
 	map<string, vector<string>> adjlist;
+	map<string, vector<string>> pglist;
+	map<string, pair<int, int>> graphH;
 
 public:
 	void VGraph(const string& filepath);
 	bool isonegraph();
 	bool isgspr();
+	bool isglinear();
+	bool convertH();
+	void saveH(const string& filepath2);
 
 };
 
-//fileG plik grafu
 
 
 void Graph::VGraph(const string& filepath)
@@ -151,10 +155,171 @@ bool Graph::isgspr()
 		
 	}
 
+	return true;
+}
 
+
+bool Graph::isglinear()
+{
+	if (!isgspr())
+	{
+		return false;
+	}
+
+	pglist.clear();
+
+	for (const auto& p : adjlist)
+	{
+		pglist[p.first];
+	}
+
+
+	for (const auto& p : adjlist)
+	{
+		for (const auto& nastepnik : p.second)
+		{
+			pglist[nastepnik].push_back(p.first);
+		}
+	}
+
+	for (auto x = adjlist.begin(); x != adjlist.end(); ++x)
+	{
+		auto y = x;
+		++y;
+
+		for (; y != adjlist.end(); ++y)
+		{
+			bool cmnv = false;
+
+			for (const auto& nx : x->second)
+			{
+				for (const auto& ny : y->second)
+				{
+					if (nx == ny)
+					{
+						cmnv = true;
+					}
+					if (cmnv)
+					{
+						break;
+					}
+				}
+			}
+
+
+			if (!cmnv)
+			{
+				continue;
+			}
+
+			bool cmpv = false;
+
+			for (const auto& px : pglist[x->first])
+			{
+				for (const auto& py : pglist[y->first])
+				{
+					if (px == py)
+					{
+						cmpv = true;
+						break;
+					}
+				}
+
+				if (cmpv)
+				{
+					break;
+				}
+			}
+			if (cmpv)
+			{
+				return false;
+			}
+		}
+	}
 
 
 	return true;
+}
+
+bool Graph::convertH()
+{
+
+	graphH.clear();
+
+
+	if (!isgspr())
+	{
+		return false;
+	}
+
+	int nrl = 1;
+	for (const auto& vg : adjlist)
+	{
+		graphH[vg.first] = { nrl, nrl + 1 };
+		nrl += 2;
+	}
+
+	for (const auto& vg : adjlist)
+	{
+		for (const auto& nastepnik : vg.second)
+		{
+			int change = graphH[vg.first].second;
+			int keep = graphH[nastepnik].first;
+
+			if (keep == change)
+			{
+				continue;
+			}
+
+			for (auto& luk : graphH)
+			{
+				if (luk.second.first == change)
+				{
+					luk.second.first = keep;
+				}
+
+				if (luk.second.second == change)
+				{
+					luk.second.second = keep;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+void Graph::saveH(const string& filepath)
+{
+	map<int, vector<int>> adjH;
+
+	for (const auto& luk : graphH)
+	{
+		int pb = luk.second.first;
+		int ke = luk.second.second;
+
+		adjH[pb].push_back(ke);
+		adjH[ke];
+	}
+
+	ofstream fileH(filepath);
+
+	if (!fileH.is_open())
+	{
+		cerr << "Blad otwarcia pliku wyjsciowego\n";
+		return;
+	}
+	for (const auto& vertex : adjH)
+	{
+		fileH << vertex.first << " -> ";
+
+		for (int vhl : vertex.second)
+		{
+			fileH << vhl << " ";
+		}
+
+		fileH << "\n";
+	}
+	fileH.close();
 }
 
 
@@ -168,10 +333,23 @@ int main()
 	if (vg.isgspr() == 1)
 	{
 		cout << "Graf jest  sprzezonym";
+		if (vg.convertH())
+		{
+			vg.saveH("graphH.txt");
+		}
+
+		if (vg.isglinear() == 1)
+		{
+			cout << " i liniowy";
+		}
+		else
+		{
+			cout << " i nie jest liniowy";
+		}
 	}
 	else
 	{
-		cout << "graf nie jest sprzezony";
+		cout << "graf nie jest sprzezony i liniowy";
 	}
 
 	return 0;
