@@ -79,7 +79,6 @@ void Graph::VGraph(const string& filepath)
 		}
 
 
-	//check
 	for (auto& p : adjlist)
 	{
 		cout << p.first << " -> ";
@@ -325,9 +324,11 @@ void Graph::saveH(const string& filepath)
 
 int main()
 {
-
+	cout << "podaj nazwe pliku";
+	string filename;
+	cin >> filename;
 	Graph vg;
-	vg.VGraph("graph.txt");
+	vg.VGraph(filename+".txt");
 
 
 	if (vg.isgspr() == 1)
