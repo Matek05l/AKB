@@ -78,6 +78,12 @@ bool Graph::VGraph(const string& filepath)
 		}
 
 	fileG.close();
+	if (adjlist.empty())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void Graph::SGraph()
@@ -330,14 +336,13 @@ int main()
 	string filename;
 	cin >> filename;
 	Graph vg;
-	vg.VGraph(filename+".txt");
-
-	vg.SGraph();
 	if (!vg.VGraph(filename + ".txt"))
 	{
-		cout << "file error";
-		return 0;
+		cerr << "file error\n";
+		return 1;
 	}
+
+	vg.SGraph();
 
 	if (vg.isgspr() == 1)
 	{
@@ -354,14 +359,18 @@ int main()
 		if (vg.convertH())
 		{
 			string saveFileH;
-			cout << "podaj nazwe pliku dla grafu H" << endl;
-			cin >> saveFileH;
+			do
+			{
+				cout << "podaj nazwe pliku dla grafu H" << endl;
+				cin >> saveFileH;
+			} while (saveFileH == filename);
+
 			vg.saveH(saveFileH + ".txt");
 		}
 	}
 	else
 	{
-		cout << "graf nie jest sprzezony i liniowy";
+		cout << "graf nie jest sprzezony, wiec nie jest liniowy";
 	}
 
 	return 0;
