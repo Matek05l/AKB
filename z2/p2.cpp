@@ -26,8 +26,6 @@ public:
 
 };
 
-
-
 bool Graph::VGraph(const string& filepath)
 {
 	ifstream fileG(filepath);
@@ -101,24 +99,24 @@ void Graph::SGraph()
 	}
 }
 
-bool Graph::isonegraph() 
+bool Graph::isonegraph()
 {
-	for (auto& p : adjlist)
-	{
-			for (size_t i = 0; i < p.second.size(); i++)
-			{
-				for (size_t j = i + 1; j <  p.second.size(); j++)
-				{
-					if (p.second[i] == p.second[j])
-					{
-						return false;
-					}
-				}
-			}
-	}
-	return true;
-}
+    for (const auto& p : adjlist)
+    {
+        for (size_t i = 0; i < p.second.size(); i++)
+        {
+            for (size_t j = i + 1; j < p.second.size(); j++)
+            {
+                if (p.second[i] == p.second[j])
+                {
+                    return false;
+                }
+            }
+        }
+    }
 
+    return true;
+}
 
 bool Graph::isgspr()
 {
@@ -165,7 +163,6 @@ bool Graph::isgspr()
 	return true;
 }
 
-
 bool Graph::isglinear()
 {
 	if (!isgspr())
@@ -183,76 +180,46 @@ bool Graph::isglinear()
 
 	for (const auto& p : adjlist)
 	{
-		for (const auto& nastepnik : p.second)
+		for (const auto& n : p.second)
 		{
-			pglist[nastepnik].push_back(p.first);
+			pglist[n].push_back(p.first);
 		}
 	}
 
-	for (auto x = adjlist.begin(); x != adjlist.end(); ++x)
+	for (const auto& p : pglist)
 	{
-		auto y = x;
-		++y;
+		const auto& pred = p.second;
 
-		for (; y != adjlist.end(); ++y)
+
+		for (size_t i = 0; i < pred.size(); i++)
 		{
-			bool cmnv = false;
-
-			for (const auto& nx : x->second)
+			for (size_t j = i + 1; j < pred.size(); j++)
 			{
-				for (const auto& ny : y->second)
+				const string& x = pred[i];
+				const string& y = pred[j];
+
+				for (const auto& px : pglist[x])
 				{
-					if (nx == ny)
+					for (const auto& py : pglist[y])
 					{
-						cmnv = true;
-					}
-					if (cmnv)
-					{
-						break;
-					}
-				}
-			}
-
-
-			if (!cmnv)
-			{
-				continue;
-			}
-
-			bool cmpv = false;
-
-			for (const auto& px : pglist[x->first])
-			{
-				for (const auto& py : pglist[y->first])
-				{
-					if (px == py)
-					{
-						cmpv = true;
-						break;
+						if (px == py)
+						{
+							return false;
+						}
 					}
 				}
-
-				if (cmpv)
-				{
-					break;
-				}
-			}
-			if (cmpv)
-			{
-				return false;
 			}
 		}
 	}
-
 
 	return true;
 }
+
 
 bool Graph::convertH()
 {
 
 	graphH.clear();
-
 
 	if (!isgspr())
 	{
@@ -328,7 +295,6 @@ void Graph::saveH(const string& filepath)
 	}
 	fileH.close();
 }
-
 
 int main()
 {
